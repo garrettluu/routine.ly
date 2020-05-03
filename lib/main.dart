@@ -46,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         body: Stack(
           children: <Widget> [
             Container(
@@ -85,7 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           alignment: Alignment.bottomCenter,
                           child: SignInButton(
                             Buttons.Google,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Dashboard())
+                              );
+                            },
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(6)),
                             ),
@@ -109,8 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -120,6 +123,118 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Dashboard"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => EditTask()),
+          );
+        },
+        tooltip: 'New task',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class EditTask extends StatelessWidget {
+  const EditTask({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 56),
+              SizedBox(height: 24),
+              Text(
+                "What would you like\nto do?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: "Rubik",
+                  fontSize: 24,
+                ),
+              ),
+              IconTextField(
+                icon: Icons.subject,
+                title: "Task Name",
+                hint: "Enter a task name",
+              ),
+              IconTextField(
+                icon: Icons.event,
+                title: "Due Date",
+                hint: "Enter a due date",
+              ),
+              IconTextField(
+                icon: Icons.access_time,
+                title: "Estimated time",
+                hint: "Enter a time",
+              )
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        tooltip: 'Create',
+        child: Icon(Icons.send),
+      ),
+    );
+  }
+}
+
+class IconTextField extends StatefulWidget {
+  IconData icon;
+  String title;
+  String hint;
+  IconTextField({Key key, this.icon, this.title, this.hint}) : super(key: key);
+
+  @override
+   IconTextFieldState createState() =>  IconTextFieldState();
+}
+
+class  IconTextFieldState extends State<IconTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 48, top: 32),
+      child: Center(
+        child: Column(
+           children: <Widget>[
+             Row(
+               children: <Widget>[
+                 Icon(widget.icon),
+                 SizedBox(width: 10,),
+                 Text(
+                   widget.title,
+                   style: TextStyle(
+                     fontWeight: FontWeight.bold,
+                     fontSize: 18,
+                   ),
+                 )
+               ],
+             ),
+             TextField(
+               decoration: InputDecoration(
+                 border: InputBorder.none,
+                 hintText: widget.hint,
+               ),
+             )
+           ],
+        ),
+      ),
     );
   }
 }

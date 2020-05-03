@@ -129,33 +129,34 @@ class Dashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text("Dashboard"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(height: 24),
-          Text(
-            "Hello, Garrett",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: "Rubik",
-              fontSize: 24,
-            )
-          ),
-          SizedBox(height: 24),
-          Text(
-            "Today is going to be a busy day",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-          SizedBox(height: 68),
-          firebase.getTaskList(),
-        ],
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 24),
+            Text(
+              "Hello, Garrett",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: "Rubik",
+                fontSize: 24,
+              )
+            ),
+            SizedBox(height: 24),
+            Text(
+              "Today is going to be a busy day",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 68),
+            firebase.getTaskList(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditTask()),
+            MaterialPageRoute(builder: (context) => EditTask(firebaseRef: firebase)),
           );
         },
         tooltip: 'New task',
@@ -233,8 +234,28 @@ class Task extends StatelessWidget {
   }
 }
 
-class EditTask extends StatelessWidget {
-  const EditTask({Key key}) : super(key: key);
+class EditTask extends StatefulWidget {
+  EditTask({Key key, this.firebaseRef}) : super(key: key);
+  final Firebase firebaseRef;
+
+  @override
+  _EditTaskState createState() => _EditTaskState();
+}
+
+class _EditTaskState extends State<EditTask> {
+  final controllerName = TextEditingController();
+
+  final controllerTime = TextEditingController();
+
+  final controllerDue = TextEditingController();
+
+  @override
+  void dispose() {
+    controllerName.dispose();
+    controllerTime.dispose();
+    controllerDue.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -262,16 +283,19 @@ class EditTask extends StatelessWidget {
                 icon: Icons.subject,
                 title: "Task Name",
                 hint: "Enter a task name",
+                controller: controllerName,
               ),
               IconTextField(
                 icon: Icons.event,
                 title: "Due Date",
                 hint: "Enter a due date",
+                controller: controllerDue,
               ),
               IconTextField(
                 icon: Icons.access_time,
                 title: "Estimated time",
                 hint: "Enter a time",
+                controller: controllerTime,
               )
             ],
           ),
@@ -279,6 +303,11 @@ class EditTask extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          widget.firebaseRef.createTask(
+            name: controllerName.text,
+            due: controllerDue.text,
+            time: controllerTime.text,
+          );
           Navigator.pop(context);
         },
         tooltip: 'Create',
@@ -289,10 +318,11 @@ class EditTask extends StatelessWidget {
 }
 
 class IconTextField extends StatefulWidget {
-  IconData icon;
-  String title;
-  String hint;
-  IconTextField({Key key, this.icon, this.title, this.hint}) : super(key: key);
+  IconTextField({Key key, this.icon, this.title, this.hint, this.controller}) : super(key: key);
+  final IconData icon;
+  final String title;
+  final String hint;
+  final TextEditingController controller;
 
   @override
    IconTextFieldState createState() =>  IconTextFieldState();
@@ -320,6 +350,7 @@ class  IconTextFieldState extends State<IconTextField> {
                ],
              ),
              TextField(
+               controller: widget.controller,
                decoration: InputDecoration(
                  border: InputBorder.none,
                  hintText: widget.hint,

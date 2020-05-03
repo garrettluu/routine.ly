@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:routinely/firebase.dart';
 
 void main() => runApp(MyApp());
 
@@ -118,7 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({Key key}) : super(key: key);
+  final Firebase firebase = new Firebase(Firestore.instance);
+  Dashboard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +147,7 @@ class Dashboard extends StatelessWidget {
             style: TextStyle(fontSize: 24),
           ),
           SizedBox(height: 68),
-          Task(),
+          firebase.getTaskList(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -165,12 +168,12 @@ class Task extends StatelessWidget {
   String title;
   String time;
   String due;
-  Task({Key key, this.title, this.time, this.due}) : super(key: key);
+  Task({Key key, this.title = '', this.time='', this.due=''}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 37.0),
+      padding: const EdgeInsets.only(left: 37.0, right: 37, bottom: 22),
       child: Container(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -189,11 +192,11 @@ class Task extends StatelessWidget {
                     )
                   ),
                   Text(
-                    "Time",
+                    "Time: " + time,
                     textAlign: TextAlign.left,
                   ),
                   Text(
-                    "Due",
+                    "Due: " + due,
                     textAlign: TextAlign.left,
                   ),
                 ],

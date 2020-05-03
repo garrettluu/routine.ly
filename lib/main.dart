@@ -130,6 +130,7 @@ class Dashboard extends StatelessWidget {
         title: Text("Dashboard"),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 24),
           Text(
@@ -165,10 +166,12 @@ class Dashboard extends StatelessWidget {
 }
 
 class Task extends StatelessWidget {
-  String title;
-  String time;
-  String due;
-  Task({Key key, this.title = '', this.time='', this.due=''}) : super(key: key);
+  Task({Key key, this.title, this.time, this.due, this.id, this.firebase}) : super(key: key);
+  final String title;
+  final String time;
+  final String due;
+  final String id;
+  final Firebase firebase;
 
   @override
   Widget build(BuildContext context) {
@@ -179,13 +182,18 @@ class Task extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: <Widget>[
-              Icon(Icons.check),
+              IconButton(
+                icon: Icon(Icons.check),
+                onPressed: () {
+                  firebase.deleteTask(id);
+                }
+              ),
               SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Work on CSE 101 HW",
+                    title,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,

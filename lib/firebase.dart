@@ -17,7 +17,7 @@ class Firebase {
           case ConnectionState.waiting:
             return new Text('Loading...');
           default:
-            return new ListView(
+            return new Column(
               children: getTasks(snapshot),
             );
         }
@@ -27,7 +27,27 @@ class Firebase {
 
   getTasks(AsyncSnapshot<QuerySnapshot> snapshot) {
     return snapshot.data.documents.map(
-      (DocumentSnapshot doc) => new Task(title: doc["name"], time: doc["time"], due: doc["due"])
+      (DocumentSnapshot doc) => new Task(
+        title: doc["name"],
+        time: doc["time"],
+        due: doc["due"],
+        id: doc.documentID,
+        firebase: this,
+      )
     ).toList();
+  }
+
+  deleteTask(String id) {
+    firebaseInstance.collection('tasks').document(id).delete();
+  }
+
+  createTask({String name, String time, String due}) {
+    firebaseInstance.collection('tasks').add(<String, String>{'name': name});
+  }
+
+  updateTask(String name, String id) {
+    firebaseInstance.collection('tasks').document(id).updateData(
+      <String, String>{'name': name}
+    );
   }
 }

@@ -176,58 +176,120 @@ class Task extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 37.0, right: 37, bottom: 22),
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: () {
-                  firebase.deleteTask(id);
-                }
-              ),
-              SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onLongPress: () {
+        final controllerName = TextEditingController(
+          text: title,
+        );
+        final controllerDue = TextEditingController(
+          text: due,
+        );
+        final controllerTime = TextEditingController(
+          text: time,
+        );
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Edit Task'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    IconTextField(
+                      icon: Icons.subject,
+                      title: "Task Name",
+                      hint: "Enter a task name",
+                      padding: EdgeInsets.all(0),
+                      controller: controllerName,
+                    ),
+                    IconTextField(
+                      icon: Icons.event,
+                      title: "Due Date",
+                      hint: "Enter a due date",
+                      padding: EdgeInsets.all(0),
+                      controller: controllerDue,
+                    ),
+                    IconTextField(
+                      icon: Icons.access_time,
+                      title: "Estimated time",
+                      hint: "Enter a time",
+                      padding: EdgeInsets.all(0),
+                      controller: controllerTime,
                     )
-                  ),
-                  Text(
-                    "Time: " + time,
-                    textAlign: TextAlign.left,
-                  ),
-                  Text(
-                    "Due: " + due,
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('ok'),
+                  onPressed: () {
+                    firebase.updateTask(
+                      controllerName.text,
+                      controllerTime.text,
+                      controllerDue.text,
+                      id
+                    );
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ]
+            );
+          }
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 37.0, right: 37, bottom: 22),
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.check),
+                  onPressed: () {
+                    firebase.deleteTask(id);
+                  }
+                ),
+                SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )
+                    ),
+                    Text(
+                      "Time: " + time,
+                      textAlign: TextAlign.left,
+                    ),
+                    Text(
+                      "Due: " + due,
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(7)),
+            boxShadow: [
+              BoxShadow (
+                color: const Color.fromRGBO(0, 0, 0, 0.2),
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+              BoxShadow (
+                color: const Color.fromRGBO(0, 0, 0, 0.19),
+                offset: Offset(0, 3),
+                blurRadius: 10,
               ),
             ],
           ),
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(7)),
-          boxShadow: [
-            BoxShadow (
-              color: const Color.fromRGBO(0, 0, 0, 0.2),
-              offset: Offset(0, 2),
-              blurRadius: 4,
-            ),
-            BoxShadow (
-              color: const Color.fromRGBO(0, 0, 0, 0.19),
-              offset: Offset(0, 3),
-              blurRadius: 10,
-            ),
-          ],
         ),
       ),
     );
@@ -318,21 +380,25 @@ class _EditTaskState extends State<EditTask> {
 }
 
 class IconTextField extends StatefulWidget {
-  IconTextField({Key key, this.icon, this.title, this.hint, this.controller}) : super(key: key);
+  IconTextField({Key key, this.icon, this.title, this.hint, this.controller,
+    this.padding = const EdgeInsets.only(left: 48, top: 32),
+    this.defaultText = ''}) : super(key: key);
   final IconData icon;
   final String title;
   final String hint;
+  final String defaultText;
   final TextEditingController controller;
+  final EdgeInsets padding; 
 
   @override
-   IconTextFieldState createState() =>  IconTextFieldState();
+  IconTextFieldState createState() =>  IconTextFieldState();
 }
 
 class  IconTextFieldState extends State<IconTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 48, top: 32),
+      padding: widget.padding,
       child: Center(
         child: Column(
            children: <Widget>[

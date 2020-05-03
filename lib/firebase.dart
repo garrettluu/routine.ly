@@ -45,9 +45,9 @@ class Firebase {
     firebaseInstance.collection('tasks').add(<String, String>{'name': name, 'due': due, 'time': time});
   }
 
-  updateTask(String name, String id) {
+  updateTask(String name, String time, String due, String id) {
     firebaseInstance.collection('tasks').document(id).updateData(
-      <String, String>{'name': name}
+      <String, String>{'name': name, 'due': due, 'time': time}
     );
   }
 }

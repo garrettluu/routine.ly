@@ -26,7 +26,7 @@ class Firebase {
   }
 
   getTasks(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.documents.map(
+    List list = snapshot.data.documents.map(
       (DocumentSnapshot doc) => new Task(
         title: doc["name"],
         time: doc["time"],
@@ -35,6 +35,12 @@ class Firebase {
         firebase: this,
       )
     ).toList();
+
+    if (list.length == 0) {
+      return list;
+    }
+
+    return list;
   }
 
   deleteTask(String id) {

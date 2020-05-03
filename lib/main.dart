@@ -126,6 +126,27 @@ class Dashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text("Dashboard"),
       ),
+      body: Column(
+        children: <Widget>[
+          SizedBox(height: 24),
+          Text(
+            "Hello, Garrett",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: "Rubik",
+              fontSize: 24,
+            )
+          ),
+          SizedBox(height: 24),
+          Text(
+            "Today is going to be a busy day",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24),
+          ),
+          SizedBox(height: 68),
+          Task(),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -135,6 +156,67 @@ class Dashboard extends StatelessWidget {
         },
         tooltip: 'New task',
         child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class Task extends StatelessWidget {
+  String title;
+  String time;
+  String due;
+  Task({Key key, this.title, this.time, this.due}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 37.0),
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.check),
+              SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Work on CSE 101 HW",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )
+                  ),
+                  Text(
+                    "Time",
+                    textAlign: TextAlign.left,
+                  ),
+                  Text(
+                    "Due",
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(7)),
+          boxShadow: [
+            BoxShadow (
+              color: const Color.fromRGBO(0, 0, 0, 0.2),
+              offset: Offset(0, 2),
+              blurRadius: 4,
+            ),
+            BoxShadow (
+              color: const Color.fromRGBO(0, 0, 0, 0.19),
+              offset: Offset(0, 3),
+              blurRadius: 10,
+            ),
+          ],
+        ),
       ),
     );
   }

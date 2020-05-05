@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Dashboard extends StatelessWidget {
-  final Firebase firebase = new Firebase(Firestore.instance);
+  final FirebaseTaskAdapter firebase = new FirebaseTaskAdapter(Firestore.instance);
   Dashboard({Key key}) : super(key: key);
 
   @override
@@ -172,7 +172,7 @@ class Task extends StatelessWidget {
   final String time;
   final String due;
   final String id;
-  final Firebase firebase;
+  final FirebaseTaskAdapter firebase;
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +298,7 @@ class Task extends StatelessWidget {
 
 class EditTask extends StatefulWidget {
   EditTask({Key key, this.firebaseRef}) : super(key: key);
-  final Firebase firebaseRef;
+  final FirebaseTaskAdapter firebaseRef;
 
   @override
   _EditTaskState createState() => _EditTaskState();

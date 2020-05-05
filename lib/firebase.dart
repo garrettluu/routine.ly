@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:routinely/DatabaseTaskAdapter.dart';
 import 'package:routinely/main.dart';
 
-class Firebase {
+class FirebaseTaskAdapter implements DatabaseTaskAdapter{
   Firestore firebaseInstance;
-  Firebase(this.firebaseInstance);
+  FirebaseTaskAdapter(this.firebaseInstance);
 
+  @override
   getTaskList() {
     return StreamBuilder<QuerySnapshot>(
       stream: firebaseInstance.collection('tasks').snapshots(),
@@ -43,14 +45,17 @@ class Firebase {
     return list;
   }
 
+  @override
   deleteTask(String id) {
     firebaseInstance.collection('tasks').document(id).delete();
   }
 
+  @override
   createTask({String name, String time, String due}) {
     firebaseInstance.collection('tasks').add(<String, String>{'name': name, 'due': due, 'time': time});
   }
 
+  @override
   updateTask(String name, String time, String due, String id) {
     firebaseInstance.collection('tasks').document(id).updateData(
       <String, String>{'name': name, 'due': due, 'time': time}

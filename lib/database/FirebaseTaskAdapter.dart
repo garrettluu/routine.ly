@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:routinely/DatabaseTaskAdapter.dart';
-import 'package:routinely/main.dart';
+import 'package:routinely/database/DatabaseTaskAdapter.dart';
+import 'package:routinely/widgets/Task.dart';
 
 class FirebaseTaskAdapter implements DatabaseTaskAdapter{
   Firestore firebaseInstance;

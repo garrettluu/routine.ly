@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:routinely/firebase.dart';
+import 'package:routinely/FirebaseTaskAdapter.dart';
 
 void main() => runApp(MyApp());
 
@@ -42,12 +42,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
         body: Stack(
           children: <Widget> [
@@ -60,8 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     top: 0,
                   ),
                   Center(
-                    // Center is a layout widget. It takes a single child and positions it
-                    // in the middle of the parent.
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -120,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Dashboard extends StatelessWidget {
-  final FirebaseTaskAdapter firebase = new FirebaseTaskAdapter(Firestore.instance);
+  static final FirebaseTaskAdapter firebase = new FirebaseTaskAdapter(Firestore.instance);
   Dashboard({Key key}) : super(key: key);
 
   @override
@@ -156,7 +148,7 @@ class Dashboard extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditTask(firebaseRef: firebase)),
+            MaterialPageRoute(builder: (context) => EditTask()),
           );
         },
         tooltip: 'New task',
@@ -166,74 +158,86 @@ class Dashboard extends StatelessWidget {
   }
 }
 
+class EditTaskDialog extends StatelessWidget {
+  EditTaskDialog({Key key, this.title = '', this.due = '', this.time = '', @required this.id}) : super(key: key);
+  final String title;
+  final String due;
+  final String time;
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    final controllerName = TextEditingController(
+      text: title,
+    );
+    final controllerDue = TextEditingController(
+      text: due,
+    );
+    final controllerTime = TextEditingController(
+      text: time,
+    );
+    return AlertDialog(
+      title: Text('Edit Task'),
+      content: SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          IconInput(
+            icon: Icons.subject,
+            title: "Task Name",
+            hint: "Enter a task name",
+            padding: EdgeInsets.all(0),
+            controller: controllerName,
+          ),
+          IconInput(
+            icon: Icons.event,
+            title: "Due Date",
+            hint: "Enter a due date",
+            padding: EdgeInsets.all(0),
+            controller: controllerDue,
+          ),
+          IconInput(
+            icon: Icons.access_time,
+            title: "Estimated time",
+            hint: "Enter a time",
+            padding: EdgeInsets.all(0),
+            controller: controllerTime,
+          )
+        ],
+      ),
+    ),
+    actions: <Widget>[
+      FlatButton(
+        child: Text('ok'),
+        onPressed: () {
+          Dashboard.firebase.updateTask(
+            controllerName.text,
+            controllerTime.text,
+            controllerDue.text,
+            id
+          );
+          Navigator.of(context).pop();
+        },
+      ),
+    ]
+  );
+  }
+}
+
 class Task extends StatelessWidget {
-  Task({Key key, this.title, this.time, this.due, this.id, this.firebase}) : super(key: key);
+  Task({Key key, this.title, this.time, this.due, this.id}) : super(key: key);
   final String title;
   final String time;
   final String due;
   final String id;
-  final FirebaseTaskAdapter firebase;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
-        final controllerName = TextEditingController(
-          text: title,
-        );
-        final controllerDue = TextEditingController(
-          text: due,
-        );
-        final controllerTime = TextEditingController(
-          text: time,
-        );
         showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text('Edit Task'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    IconTextField(
-                      icon: Icons.subject,
-                      title: "Task Name",
-                      hint: "Enter a task name",
-                      padding: EdgeInsets.all(0),
-                      controller: controllerName,
-                    ),
-                    IconTextField(
-                      icon: Icons.event,
-                      title: "Due Date",
-                      hint: "Enter a due date",
-                      padding: EdgeInsets.all(0),
-                      controller: controllerDue,
-                    ),
-                    IconTextField(
-                      icon: Icons.access_time,
-                      title: "Estimated time",
-                      hint: "Enter a time",
-                      padding: EdgeInsets.all(0),
-                      controller: controllerTime,
-                    )
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('ok'),
-                  onPressed: () {
-                    firebase.updateTask(
-                      controllerName.text,
-                      controllerTime.text,
-                      controllerDue.text,
-                      id
-                    );
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ]
-            );
+            return EditTaskDialog(id: this.id, title: this.title, due: this.due, time: this.time);
           }
         );
       },
@@ -247,7 +251,7 @@ class Task extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.check),
                   onPressed: () {
-                    firebase.deleteTask(id);
+                    Dashboard.firebase.deleteTask(id);
                   }
                 ),
                 SizedBox(width: 16),
@@ -297,8 +301,7 @@ class Task extends StatelessWidget {
 }
 
 class EditTask extends StatefulWidget {
-  EditTask({Key key, this.firebaseRef}) : super(key: key);
-  final FirebaseTaskAdapter firebaseRef;
+  EditTask({Key key}) : super(key: key);
 
   @override
   _EditTaskState createState() => _EditTaskState();
@@ -321,66 +324,67 @@ class _EditTaskState extends State<EditTask> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 56),
-              SizedBox(height: 24),
-              Text(
-                "What would you like\nto do?",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: "Rubik",
-                  fontSize: 24,
-                ),
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 56),
+                  SizedBox(height: 24),
+                  Text(
+                    "What would you like\nto do?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: "Rubik",
+                      fontSize: 24,
+                    ),
+                  ),
+                  IconInput(
+                    icon: Icons.subject,
+                    title: "Task Name",
+                    hint: "Enter a task name",
+                    controller: controllerName,
+                  ),
+                  IconInput(
+                    icon: Icons.event,
+                    title: "Due Date",
+                    hint: "Enter a due date",
+                    controller: controllerDue,
+                  ),
+                  IconInput(
+                    icon: Icons.access_time,
+                    title: "Estimated time",
+                    hint: "Enter a time",
+                    controller: controllerTime,
+                  )
+                ],
               ),
-              IconTextField(
-                icon: Icons.subject,
-                title: "Task Name",
-                hint: "Enter a task name",
-                controller: controllerName,
-              ),
-              IconTextField(
-                icon: Icons.event,
-                title: "Due Date",
-                hint: "Enter a due date",
-                controller: controllerDue,
-              ),
-              IconTextField(
-                icon: Icons.access_time,
-                title: "Estimated time",
-                hint: "Enter a time",
-                controller: controllerTime,
-              )
-            ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Dashboard.firebase.createTask(
+                name: controllerName.text,
+                due: controllerDue.text,
+                time: controllerTime.text,
+              );
+              Navigator.pop(context);
+            },
+            tooltip: 'Create',
+            child: Icon(Icons.send),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          widget.firebaseRef.createTask(
-            name: controllerName.text,
-            due: controllerDue.text,
-            time: controllerTime.text,
-          );
-          Navigator.pop(context);
-        },
-        tooltip: 'Create',
-        child: Icon(Icons.send),
       ),
     );
   }
 }
 
-class IconTextField extends StatefulWidget {
-  IconTextField({Key key, this.icon, this.title, this.hint, this.controller,
+class IconInput extends StatefulWidget {
+  IconInput({Key key, this.icon, this.title, this.hint, this.controller,
     this.padding = const EdgeInsets.only(left: 48, top: 32),
     this.defaultText = ''}) : super(key: key);
   final IconData icon;
@@ -391,10 +395,10 @@ class IconTextField extends StatefulWidget {
   final EdgeInsets padding; 
 
   @override
-  IconTextFieldState createState() =>  IconTextFieldState();
+  IconInputState createState() =>  IconInputState();
 }
 
-class  IconTextFieldState extends State<IconTextField> {
+class  IconInputState extends State<IconInput> {
   @override
   Widget build(BuildContext context) {
     return Padding(

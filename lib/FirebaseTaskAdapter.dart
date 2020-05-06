@@ -34,7 +34,6 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
         time: doc["time"],
         due: doc["due"],
         id: doc.documentID,
-        firebase: this,
       )
     ).toList();
 

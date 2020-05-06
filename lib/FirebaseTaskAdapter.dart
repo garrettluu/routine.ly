@@ -32,7 +32,7 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
       (DocumentSnapshot doc) => new Task(
         title: doc["name"],
         time: doc["time"],
-        due: doc["due"],
+        due: (doc["due"] as Timestamp).toDate(),
         id: doc.documentID,
       )
     ).toList();
@@ -50,14 +50,14 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
   }
 
   @override
-  createTask({String name, String time, String due}) {
-    firebaseInstance.collection('tasks').add(<String, String>{'name': name, 'due': due, 'time': time});
+  createTask({String name, String time, DateTime due}) {
+    firebaseInstance.collection('tasks').add(<String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time});
   }
 
   @override
-  updateTask(String name, String time, String due, String id) {
+  updateTask(String name, String time, DateTime due, String id) {
     firebaseInstance.collection('tasks').document(id).updateData(
-      <String, String>{'name': name, 'due': due, 'time': time}
+      <String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time}
     );
   }
 }

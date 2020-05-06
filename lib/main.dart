@@ -158,23 +158,27 @@ class Dashboard extends StatelessWidget {
   }
 }
 
-class EditTaskDialog extends StatelessWidget {
-  EditTaskDialog({Key key, this.title = '', this.due = '', this.time = '', @required this.id}) : super(key: key);
+class EditTaskDialog extends StatefulWidget {
+  EditTaskDialog({Key key, this.title = '', this.due, this.time = '', @required this.id}) : super(key: key);
   final String title;
-  final String due;
+  final DateTime due;
   final String time;
   final String id;
 
   @override
+  _EditTaskDialogState createState() => _EditTaskDialogState();
+}
+
+class _EditTaskDialogState extends State<EditTaskDialog> {
+  DateTime _due;
+
+  @override
   Widget build(BuildContext context) {
     final controllerName = TextEditingController(
-      text: title,
-    );
-    final controllerDue = TextEditingController(
-      text: due,
+      text: widget.title,
     );
     final controllerTime = TextEditingController(
-      text: time,
+      text: widget.time,
     );
     return AlertDialog(
       title: Text('Edit Task'),
@@ -197,13 +201,13 @@ class EditTaskDialog extends StatelessWidget {
             icon: Icons.event,
             title: "Due Date",
             padding: EdgeInsets.all(0),
-            input: TextField(
-              controller: controllerDue,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "Enter a due date",
-              ),
-            )
+            input: DatePicker(
+              updateState: (date) {
+                setState(() {
+                  _due = date;
+                });
+              },
+            ),
           ),
           IconInput(
             icon: Icons.access_time,
@@ -227,8 +231,8 @@ class EditTaskDialog extends StatelessWidget {
           Dashboard.firebase.updateTask(
             controllerName.text,
             controllerTime.text,
-            controllerDue.text,
-            id
+            _due,
+            widget.id
           );
           Navigator.of(context).pop();
         },
@@ -242,7 +246,7 @@ class Task extends StatelessWidget {
   Task({Key key, this.title, this.time, this.due, this.id}) : super(key: key);
   final String title;
   final String time;
-  final String due;
+  final DateTime due;
   final String id;
 
   @override
@@ -285,7 +289,7 @@ class Task extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                     Text(
-                      "Due: " + due,
+                      "Due: " + due.toString(),
                       textAlign: TextAlign.left,
                     ),
                   ],
@@ -325,7 +329,6 @@ class EditTask extends StatefulWidget {
 class _EditTaskState extends State<EditTask> {
   final controllerName = TextEditingController();
   final controllerTime = TextEditingController();
-  final controllerDue = TextEditingController();
 
   DateTime _due;
 
@@ -333,7 +336,6 @@ class _EditTaskState extends State<EditTask> {
   void dispose() {
     controllerName.dispose();
     controllerTime.dispose();
-    controllerDue.dispose();
     super.dispose();
   }
 
@@ -362,7 +364,7 @@ class _EditTaskState extends State<EditTask> {
                     icon: Icons.subject,
                     title: "Task Name",
                     input: TextField(
-                      controller: controllerDue,
+                      controller: controllerName,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter a task name",
@@ -399,7 +401,7 @@ class _EditTaskState extends State<EditTask> {
             onPressed: () {
               Dashboard.firebase.createTask(
                 name: controllerName.text,
-                due: controllerDue.text,
+                due: _due,
                 time: controllerTime.text,
               );
               Navigator.pop(context);

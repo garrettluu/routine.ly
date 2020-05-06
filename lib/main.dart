@@ -184,23 +184,38 @@ class EditTaskDialog extends StatelessWidget {
           IconInput(
             icon: Icons.subject,
             title: "Task Name",
-            hint: "Enter a task name",
             padding: EdgeInsets.all(0),
-            controller: controllerName,
+            input: TextField(
+              controller: controllerName,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter a task name",
+              ),
+            )
           ),
           IconInput(
             icon: Icons.event,
             title: "Due Date",
-            hint: "Enter a due date",
             padding: EdgeInsets.all(0),
-            controller: controllerDue,
+            input: TextField(
+              controller: controllerDue,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter a due date",
+              ),
+            )
           ),
           IconInput(
             icon: Icons.access_time,
             title: "Estimated time",
-            hint: "Enter a time",
             padding: EdgeInsets.all(0),
-            controller: controllerTime,
+            input: TextField(
+              controller: controllerTime,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter an estimated time",
+              ),
+            )
           )
         ],
       ),
@@ -346,20 +361,35 @@ class _EditTaskState extends State<EditTask> {
                   IconInput(
                     icon: Icons.subject,
                     title: "Task Name",
-                    hint: "Enter a task name",
-                    controller: controllerName,
+                    input: TextField(
+                      controller: controllerName,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter a task name",
+                      ),
+                    )
                   ),
                   IconInput(
                     icon: Icons.event,
                     title: "Due Date",
-                    hint: "Enter a due date",
-                    controller: controllerDue,
+                    input: TextField(
+                      controller: controllerDue,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter a task name",
+                      ),
+                    )
                   ),
                   IconInput(
                     icon: Icons.access_time,
                     title: "Estimated time",
-                    hint: "Enter a time",
-                    controller: controllerTime,
+                    input: TextField(
+                      controller: controllerTime,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter a task name",
+                      ),
+                    )
                   )
                 ],
               ),
@@ -384,15 +414,15 @@ class _EditTaskState extends State<EditTask> {
 }
 
 class IconInput extends StatefulWidget {
-  IconInput({Key key, this.icon, this.title, this.hint, this.controller,
+  IconInput({Key key, this.icon, this.title,
     this.padding = const EdgeInsets.only(left: 48, top: 32),
-    this.defaultText = ''}) : super(key: key);
+    this.defaultText = '',
+    this.input}) : super(key: key); 
   final IconData icon;
   final String title;
-  final String hint;
   final String defaultText;
-  final TextEditingController controller;
   final EdgeInsets padding; 
+  final Widget input;
 
   @override
   IconInputState createState() =>  IconInputState();
@@ -419,13 +449,7 @@ class  IconInputState extends State<IconInput> {
                  )
                ],
              ),
-             TextField(
-               controller: widget.controller,
-               decoration: InputDecoration(
-                 border: InputBorder.none,
-                 hintText: widget.hint,
-               ),
-             )
+             widget.input,
            ],
         ),
       ),

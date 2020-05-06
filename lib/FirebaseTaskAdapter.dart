@@ -50,12 +50,12 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
   }
 
   @override
-  createTask({String name, String time, DateTime due}) {
+  createTask({String name, int time, DateTime due}) {
     firebaseInstance.collection('tasks').add(<String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time});
   }
 
   @override
-  updateTask(String name, String time, DateTime due, String id) {
+  updateTask(String name, int time, DateTime due, String id) {
     firebaseInstance.collection('tasks').document(id).updateData(
       <String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time}
     );

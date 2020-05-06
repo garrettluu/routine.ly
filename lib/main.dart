@@ -215,6 +215,7 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
             padding: EdgeInsets.all(0),
             input: TextField(
               controller: controllerTime,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: "Enter an estimated time",
@@ -230,7 +231,7 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
         onPressed: () {
           Dashboard.firebase.updateTask(
             controllerName.text,
-            controllerTime.text,
+            int.parse(controllerTime.text),
             _due,
             widget.id
           );
@@ -245,7 +246,7 @@ class _EditTaskDialogState extends State<EditTaskDialog> {
 class Task extends StatelessWidget {
   Task({Key key, this.title, this.time, this.due, this.id}) : super(key: key);
   final String title;
-  final String time;
+  final int time;
   final DateTime due;
   final String id;
 
@@ -256,7 +257,7 @@ class Task extends StatelessWidget {
         showDialog(
           context: context,
           builder: (context) {
-            return EditTaskDialog(id: this.id, title: this.title, due: this.due, time: this.time);
+            return EditTaskDialog(id: this.id, title: this.title, due: this.due, time: this.time.toString());
           }
         );
       },
@@ -285,7 +286,7 @@ class Task extends StatelessWidget {
                       )
                     ),
                     Text(
-                      "Time: " + time,
+                      "Time: " + time.toString(),
                       textAlign: TextAlign.left,
                     ),
                     Text(
@@ -386,10 +387,11 @@ class _EditTaskState extends State<EditTask> {
                     icon: Icons.access_time,
                     title: "Estimated time",
                     input: TextField(
+                      keyboardType: TextInputType.number,
                       controller: controllerTime,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter a task name",
+                        hintText: "Enter number of hours",
                       ),
                     )
                   )
@@ -402,7 +404,7 @@ class _EditTaskState extends State<EditTask> {
               Dashboard.firebase.createTask(
                 name: controllerName.text,
                 due: _due,
-                time: controllerTime.text,
+                time: int.parse(controllerTime.text),
               );
               Navigator.pop(context);
             },

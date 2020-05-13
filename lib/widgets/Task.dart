@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:routinely/main.dart';
+
 
 import 'EditTaskDialog.dart';
 
@@ -10,9 +11,11 @@ class Task extends StatelessWidget {
   final int time;
   final DateTime due;
   final String id;
+  final DateFormat formatDate = new DateFormat.yMMMMd();
 
   @override
   Widget build(BuildContext context) {
+    print(formatDate.format(due));
     return GestureDetector(
       onLongPress: () {
         showDialog(
@@ -51,7 +54,7 @@ class Task extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                     Text(
-                      "Due: " + due.toString(),
+                      "Due: " + formatDate.format(due),
                       textAlign: TextAlign.left,
                     ),
                   ],

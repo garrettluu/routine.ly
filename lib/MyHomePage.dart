@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:routinely/Dashboard.dart';
+import 'package:routinely/Login.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:routinely/services/auth.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -25,70 +29,88 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-          children: <Widget> [
-            Container(
-              child: Stack(
-                children: <Widget> [
-                  Positioned(
-                    child: SvgPicture.asset("assets/blob.svg"),
-                    left: 0,
-                    top: 0,
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 322,
-                          height: 204,
-                          child: Align(
-                            alignment: Alignment(0.0, 0.8),
-                            child: SvgPicture.asset("assets/logo.svg"),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  child: SvgPicture.asset("assets/blob.svg"),
+                  left: 0,
+                  top: 0,
+                ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: 322,
+                        height: 204,
+                        child: Align(
+                          alignment: Alignment(0.0, 0.8),
+                          child: SvgPicture.asset("assets/logo.svg"),
+                        ),
+                      ),
+                      Text(
+                        "Task scheduling for\nbusy people",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 152),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SignInButton(
+                          Buttons.Google,
+                          onPressed: () {
+                            authService.googleSignIn();
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => Dashboard()));
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
                           ),
                         ),
-                        Text(
-                          "Task scheduling for\nbusy people",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 152),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SignInButton(
-                            Buttons.Google,
-                            onPressed: () {
-                              Navigator.push(
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SignInButton(
+                          Buttons.Email,
+                          onPressed: () {
+                            Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => Dashboard())
-                              );
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                                MaterialPageRoute(
+                                    builder: (context) => Login()));
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.0, 0.0),
+                end: Alignment(0.0, 1.0),
+                colors: <Color>[
+                  const Color(0xFF43E97B),
+                  const Color(0xFF38F9D7),
                 ],
               ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.0, 0.0),
-                  end: Alignment(0.0, 1.0),
-                  colors: <Color>[
-                    const Color(0xFF43E97B),
-                    const Color(0xFF38F9D7),
-                  ],
-                ),
-              ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }

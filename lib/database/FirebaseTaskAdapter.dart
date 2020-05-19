@@ -29,7 +29,7 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
 
   getTasks(AsyncSnapshot<QuerySnapshot> snapshot) {
     List list = snapshot.data.documents.map(
-      (DocumentSnapshot doc) => new Task(
+      (DocumentSnapshot doc) => new TaskWidget(
         title: doc["name"],
         time: doc["time"],
         due: (doc["due"] as Timestamp).toDate(),

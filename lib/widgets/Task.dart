@@ -5,8 +5,8 @@ import 'package:routinely/main.dart';
 
 import 'EditTaskDialog.dart';
 
-class Task extends StatelessWidget {
-  Task({Key key, this.title, this.time, this.due, this.id}) : super(key: key);
+class TaskWidget extends StatelessWidget {
+  TaskWidget({Key key, this.title, this.time, this.due, this.id}) : super(key: key);
   final String title;
   final int time;
   final DateTime due;

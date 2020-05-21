@@ -1,16 +1,23 @@
-## Inspiration
-Quarantine = no routine, making it harder to get things done and stay productive. Routine.ly is a simple todo-list app that encourages you to get things done!
+A todo-list app originally made at Hack at Home 2020.
 
-## How I built it
-Designed the UI using **Figma**, then used **Flutter** to code it. Also used **Firebase** as a back-end to store and retrieve tasks.
+### Running the app
 
-## Challenges/Accomplishments
-I worked alone on this project so the time constraint was difficult to work with, so I scaled the project down to a basic CRUD app to make it manageable within the time. However, I think I did pretty well in starting a project and creating a framework for a more complex application in the future.
+Make sure you have Flutter installed before continuing. If you don't,
+go to this site and follow the instructions for your operating system:
 
-## What I learned
-Flutter. Is. Cool!
+https://flutter.dev/docs/get-started/install
 
-(also F i r e b a s e I guess)
+Open the terminal in the root directory of the project and type
+`flutter run` while you have an Android device connected (iOS is
+currently not supported). Wait for the compiler to finish building,
+and now your app is ready!
 
-## What's next for routine.ly
-Integration with Google Calendar to schedule times for tasks, and split up large tasks into daily sections.
+Any changes made while the app is running will dynamically change the
+app, so no need to recompile everything.
+
+### Planned Features
+
+- Google Calendar integration to allow for planning of tasks
+- Notifications with Firebase Cloud Messaging
+- Other sign-in methods
+

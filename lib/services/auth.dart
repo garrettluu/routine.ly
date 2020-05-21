@@ -5,15 +5,20 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Start the google sign in flow and return the firebase user when finished
   Future<FirebaseUser> googleSignIn() async {
+    //Get google account
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    //Get authentication details
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    //Generate Auth credentials
+    final AuthCredential credential =
+      GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
+    //Get the firebase user and return
     AuthResult authResult = await _auth.signInWithCredential(credential);
     FirebaseUser user = authResult.user;
-    print("Signed in as " + user.displayName);
     return user;
   }
 }

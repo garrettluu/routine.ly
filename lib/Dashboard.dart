@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:routinely/main.dart';
 
 import 'EditTask.dart';
 
 class Dashboard extends StatelessWidget {
-  Dashboard({Key key}) : super(key: key);
+  Dashboard({Key key, this.user}) : super(key: key);
+  final FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class Dashboard extends StatelessWidget {
           children: <Widget>[
             SizedBox(height: 24),
             Text(
-              "Hello, Garrett",
+              "Hello, " + user.displayName,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: "Rubik",

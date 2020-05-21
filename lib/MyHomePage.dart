@@ -64,12 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         alignment: Alignment.bottomCenter,
                         child: SignInButton(
                           Buttons.Google,
-                          onPressed: () {
-                            authService.googleSignIn();
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => Dashboard()));
+                          onPressed: () async {
+                            FirebaseUser user = await authService.googleSignIn();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Dashboard(user: user)));
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(6)),

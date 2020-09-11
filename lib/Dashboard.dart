@@ -18,14 +18,12 @@ class Dashboard extends StatelessWidget {
         child: Column(
           children: <Widget>[
             SizedBox(height: 24),
-            Text(
-              "Hello, " + user.displayName,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: "Rubik",
-                fontSize: 24,
-              )
-            ),
+            Text("Hello, " + user.displayName,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: "Rubik",
+                  fontSize: 24,
+                )),
             SizedBox(height: 24),
             Text(
               "Today is going to be a busy day",
@@ -33,7 +31,7 @@ class Dashboard extends StatelessWidget {
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 68),
-            MyApp.firebase.getTaskList(),
+            MyApp.firebase.getTaskList(user.uid),
           ],
         ),
       ),
@@ -41,7 +39,10 @@ class Dashboard extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditTask()),
+            MaterialPageRoute(
+                builder: (context) => EditTask(
+                      userId: user.uid,
+                    )),
           );
         },
         tooltip: 'New task',

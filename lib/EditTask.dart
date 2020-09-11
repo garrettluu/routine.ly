@@ -5,7 +5,8 @@ import 'widgets/DatePicker.dart';
 import 'widgets/IconInput.dart';
 
 class EditTask extends StatefulWidget {
-  EditTask({Key key}) : super(key: key);
+  EditTask({Key key, this.userId}) : super(key: key);
+  final String userId;
 
   @override
   _EditTaskState createState() => _EditTaskState();
@@ -46,16 +47,15 @@ class _EditTaskState extends State<EditTask> {
                     ),
                   ),
                   IconInput(
-                    icon: Icons.subject,
-                    title: "Task Name",
-                    input: TextField(
-                      controller: controllerName,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter a task name",
-                      ),
-                    )
-                  ),
+                      icon: Icons.subject,
+                      title: "Task Name",
+                      input: TextField(
+                        controller: controllerName,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter a task name",
+                        ),
+                      )),
                   IconInput(
                     icon: Icons.event,
                     title: "Due Date",
@@ -68,17 +68,16 @@ class _EditTaskState extends State<EditTask> {
                     ),
                   ),
                   IconInput(
-                    icon: Icons.access_time,
-                    title: "Estimated time",
-                    input: TextField(
-                      keyboardType: TextInputType.number,
-                      controller: controllerTime,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter number of hours",
-                      ),
-                    )
-                  )
+                      icon: Icons.access_time,
+                      title: "Estimated time",
+                      input: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: controllerTime,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter number of hours",
+                        ),
+                      ))
                 ],
               ),
             ),
@@ -89,6 +88,7 @@ class _EditTaskState extends State<EditTask> {
                 name: controllerName.text,
                 due: _due,
                 time: int.parse(controllerTime.text),
+                userId: this.widget.userId,
               );
               Navigator.pop(context);
             },

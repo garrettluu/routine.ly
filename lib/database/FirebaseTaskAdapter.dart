@@ -3,39 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:routinely/database/DatabaseTaskAdapter.dart';
 import 'package:routinely/widgets/Task.dart';
 
-class FirebaseTaskAdapter implements DatabaseTaskAdapter{
+class FirebaseTaskAdapter implements DatabaseTaskAdapter {
   Firestore firebaseInstance;
   FirebaseTaskAdapter(this.firebaseInstance);
 
   @override
-  getTaskList() {
+  getTaskList(String userId) {
     return StreamBuilder<QuerySnapshot>(
-      stream: firebaseInstance.collection('tasks').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return new Text('Error: ${snapshot.error}');
-        }
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return new Text('Loading...');
-          default:
-            return new Column(
-              children: getTasks(snapshot),
-            );
-        }
-      }
-    );
+        stream: firebaseInstance
+            .collection('tasks')
+            .where('user', isEqualTo: userId)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return new Text('Error: ${snapshot.error}');
+          }
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return new Text('Loading...');
+            default:
+              return new Column(
+                children: getTasks(snapshot),
+              );
+          }
+        });
   }
 
   getTasks(AsyncSnapshot<QuerySnapshot> snapshot) {
-    List list = snapshot.data.documents.map(
-      (DocumentSnapshot doc) => new TaskWidget(
-        title: doc["name"],
-        time: doc["time"],
-        due: (doc["due"] as Timestamp).toDate(),
-        id: doc.documentID,
-      )
-    ).toList();
+    List list = snapshot.data.documents
+        .map((DocumentSnapshot doc) => new TaskWidget(
+              title: doc["name"],
+              time: doc["time"],
+              due: (doc["due"] as Timestamp).toDate(),
+              id: doc.documentID,
+            ))
+        .toList();
 
     if (list.length == 0) {
       return list;
@@ -50,14 +52,24 @@ class FirebaseTaskAdapter implements DatabaseTaskAdapter{
   }
 
   @override
-  createTask({String name, int time, DateTime due}) {
-    firebaseInstance.collection('tasks').add(<String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time});
+  createTask({String name, int time, DateTime due, String userId}) {
+    firebaseInstance.collection('tasks').add(<String, dynamic>{
+      'name': name,
+      'due': Timestamp.fromDate(due),
+      'time': time,
+      'user': userId
+    });
   }
 
   @override
   updateTask(String name, int time, DateTime due, String id) {
-    firebaseInstance.collection('tasks').document(id).updateData(
-      <String, dynamic>{'name': name, 'due': Timestamp.fromDate(due), 'time': time}
-    );
+    firebaseInstance
+        .collection('tasks')
+        .document(id)
+        .updateData(<String, dynamic>{
+      'name': name,
+      'due': Timestamp.fromDate(due),
+      'time': time
+    });
   }
 }
